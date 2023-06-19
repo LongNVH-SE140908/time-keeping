@@ -27,15 +27,31 @@ import React, { useEffect, useState } from "react";
 
 // state
 import { useSetRecoilState } from "recoil";
+import getWeather from "../../api/user/userapi";
+import checkLoginUser from "../../api/user/userapi";
+import ReqUser from "../../api/types/CallPropsUser";
 // state user data
 
-export default function login({ navigation }) {
+export default function login({ navigation }: any) {
   const [modalVisible, setModalVisible] = useState(false);
   const [tostVisible, setToastVisible] = useState(false);
   const [service, setService] = React.useState("");
   const [loginLoad, setLoginLoad] = React.useState(false);
   //handle login
-  function onSubmit() {
+  async function onSubmit() {
+    var args: ReqUser = {
+      userName: "admin1",
+      passWord: "hashed_password"
+    }
+    await checkLoginUser(args).then((response: any) => {
+      console.log(response);
+
+      if (response.role == "admin") {
+        navigation.navigate('Auth')
+      }
+
+    });
+
     setLoginLoad(true);
     setToastVisible(true);
   }
@@ -43,12 +59,11 @@ export default function login({ navigation }) {
     <View style={styles.container}>
       <Center>
         <Image
-          style={{ width: "100vw", height: "200px" }}
           source={{
             uri: "https://th.bing.com/th/id/OIG.RO8BPnjwoex8d0yQAObk?pid=ImgGn",
           }}
           alt="Alternate Text"
-          size="xl"
+
         />
       </Center>
 
@@ -86,10 +101,7 @@ export default function login({ navigation }) {
           </FormControl.ErrorMessage>
         </Stack>
         <Stack mx={"38%"} paddingTop={"5"}>
-          <Button style={{ display: loginLoad ? "flex" : "none" }} isLoading isLoadingText="Submitting">
-            Login
-          </Button>
-          <Button style={{ display: loginLoad ? "none" : "flex" }} onPress={onSubmit}>
+          <Button isLoading={loginLoad} isLoadingText="Submitting" onPress={onSubmit}>
             Login
           </Button>
         </Stack>
@@ -109,7 +121,7 @@ export default function login({ navigation }) {
                   <Center>
                     <HStack space={2} flexShrink={1}>
                       <Alert.Icon />
-                      <Text fontSize="md" color="coolGray.800">
+                      <Text >
                         Log in Failed!
                       </Text>
                     </HStack>

@@ -6,87 +6,36 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 const Tab = createBottomTabNavigator();
 //Screen
 import Home from "../../screens/home/home";
-
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { NavigationContainer } from "@react-navigation/native";
 //icons
 
 import { useRecoilState } from "recoil";
+import home from "../../screens/home/home";
 
 export default function auth() {
   return (
     <View style={{ flex: 1, position: "relative" }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused }) => {
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
             if (route.name === "Home") {
-              return (
-                <Image
-                  style={{ width: 24, height: 24 }}
-                  source={focused ? "https://icons8.com/icon/86527/home" : "https://icons8.com/icon/83326/home"}
-                />
-              );
-            } else if (route.name === "Book") {
-              return (
-                <Image
-                  style={{ width: 24, height: 24 }}
-                  source={
-                    focused
-                      ? "https://icons8.com/icon/4Z7EBZWE96y9/open-book"
-                      : "https://icons8.com/icon/x25hsQceGEys/open-book"
-                  }
-                />
-              );
-            } else if (route.name === "User") {
-              return (
-                <Image
-                  style={{ width: 24, height: 24 }}
-                  source={focused ? "https://icons8.com/icon/DvG9sokSVTRZ/user" : "https://icons8.com/icon/22396/user"}
-                />
-              );
+              iconName = focused ? "ios-information-circle" : "ios-information-circle-outline";
+            } else if (route.name === "Settings") {
+              iconName = focused ? "ios-list" : "ios-list-outline";
             }
+
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarLabel: () => {
-            return null;
-          },
-          tabBarStyle: styles.tab,
-          headerShown: false,
+          tabBarActiveTintColor: "tomato",
+          tabBarInactiveTintColor: "gray",
         })}
       >
-        <Tab.Screen
-          name="Home"
-          component={Home}
-          listeners={{
-            tabPress: (e) => {
-              // Prevent default action
-            },
-          }}
-        />
-        <Tab.Screen
-          name="Book"
-          component={Book}
-          listeners={{
-            tabPress: (e) => {
-              // Prevent default action
-            },
-          }}
-        />
-        <Tab.Screen
-          name="Bag"
-          component={Bag}
-          listeners={{
-            tabPress: (e) => {
-              // Prevent default action
-            },
-          }}
-        />
-        <Tab.Screen
-          name="User"
-          component={User}
-          listeners={{
-            tabPress: (e) => {
-              // Prevent default action
-            },
-          }}
-        />
+        <Tab.Screen name="Home" component={home} />
+        <Tab.Screen name="Settings" component={home} />
       </Tab.Navigator>
     </View>
   );

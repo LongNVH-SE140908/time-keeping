@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 // UI
 import {
   Alert,
@@ -7,53 +7,60 @@ import {
   IconButton,
   CloseIcon,
   Center,
-  Spinner,
-  Heading,
   Stack,
   Slide,
   Select,
-  Box,
+
   CheckIcon,
-  NativeBaseProvider,
+
   FormControl,
   Input,
   WarningOutlineIcon,
   Button,
 } from "native-base";
 // Icon
-import { Ionicons } from "@expo/vector-icons";
 
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
 
 // state
 import { useSetRecoilState } from "recoil";
 import getWeather from "../../api/user/userapi";
 import checkLoginUser from "../../api/user/userapi";
 import ReqUser from "../../api/types/CallPropsUser";
+import { userAppState } from "../../store/user/user";
 // state user data
 
 export default function login({ navigation }: any) {
-  const [modalVisible, setModalVisible] = useState(false);
+
   const [tostVisible, setToastVisible] = useState(false);
-  const [service, setService] = React.useState("");
+  const [tostVisibleSuccess, setToastVisibleSuccess] = useState(false);
+
   const [loginLoad, setLoginLoad] = React.useState(false);
+  const setAppUser = useSetRecoilState(userAppState)
   //handle login
   async function onSubmit() {
+    setLoginLoad(true);
     var args: ReqUser = {
       userName: "admin1",
       passWord: "hashed_password"
     }
     await checkLoginUser(args).then((response: any) => {
       console.log(response);
-
+      setAppUser(response);
       if (response.role == "admin") {
-        navigation.navigate('Auth')
+        setToastVisibleSuccess(true);
+        setTimeout(() => {
+          setToastVisibleSuccess(false);
+        }, 2000);
+        navigation.navigate('Auth');
+
       }
 
     });
 
-    setLoginLoad(true);
-    setToastVisible(true);
+
+    setLoginLoad(false);
   }
   return (
     <View style={styles.container}>
@@ -138,6 +145,35 @@ export default function login({ navigation }: any) {
           </Stack>
         </Center>
       </Slide>
+
+
+      <Slide in={tostVisibleSuccess} style={{ alignItems: "center" }}>
+        <Center style={styles.tostBox}>
+          <Stack space={3} w="90%" maxW="400">
+            <Alert w="100%" status="success">
+              <VStack space={2} flexShrink={1} w="100%">
+                <HStack flexShrink={1} space={2} justifyContent="space-between">
+                  <Center>
+                    <HStack space={2} flexShrink={1}>
+                      <Alert.Icon />
+                      <Text >
+                        Login Success
+                      </Text>
+                    </HStack>
+                  </Center>
+                  <IconButton
+                    onPress={() => setToastVisible(false)}
+                    style={{ marginRight: 8 }}
+                    variant="unstyled"
+                    icon={<CloseIcon size="3" color="coolGray.600" />}
+                  />
+                </HStack>
+              </VStack>
+            </Alert>
+          </Stack>
+        </Center>
+      </Slide>
+
     </View>
   );
 }
